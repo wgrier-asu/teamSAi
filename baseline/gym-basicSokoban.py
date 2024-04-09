@@ -11,7 +11,7 @@ gym.pprint_registry()
 SEED = 1
 env_name = 'SideEffects-v0'
 episodes = 1
-max_steps = 20
+max_steps = 40
 
 print('\n\nMaking environment...')
 env = gym.make(id=env_name,
@@ -46,7 +46,8 @@ for i_episode in range(episodes):#20
     
     for t in range(max_steps+10):#100
         env.render()
-        action = env.action_space.sample()
+        # action = env.action_space.sample()
+        action = int(input("Enter action ==> "))
 
         # Sleep makes the actions visible for users
         time.sleep(1)

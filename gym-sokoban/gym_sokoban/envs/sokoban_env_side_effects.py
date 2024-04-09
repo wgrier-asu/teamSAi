@@ -193,19 +193,27 @@ class SideEffectsSokobanEnv(SokobanEnv):
             old_adjacent_walls = 0
             for i in range(4):
                 adjacent = new_position + CHANGE_COORDINATES[i]
-                print(adjacent, self.room_fixed[adjacent[0], adjacent[1]])
                 if self.room_fixed[adjacent[0], adjacent[1]] == wall: old_adjacent_walls += 1
 
             new_adjacent_walls = 0
+            new_wall_positions = []
             for i in range(4):
                 adjacent = new_box_position + CHANGE_COORDINATES[i]
-                print(adjacent, self.room_fixed[adjacent[0], adjacent[1]])
-                if self.room_fixed[adjacent[0], adjacent[1]] == wall: new_adjacent_walls += 1
+                if self.room_fixed[adjacent[0], adjacent[1]] == wall: 
+                    new_adjacent_walls += 1
+                    new_wall_positions.append(i)
 
             change_in_adjacent = new_adjacent_walls - old_adjacent_walls
-            if(change_in_adjacent > 0):
+
+            if(change_in_adjacent == 1): 
                 if(old_adjacent_walls == 0): self.current_was_pushed_against_wall = 1
                 else: self.current_was_pushed_into_corner = 1
+            elif(change_in_adjacent == 2 and old_adjacent_walls == 0):
+                # check if a corner or walls are on opposite sides of the box
+                if( 0 in new_wall_positions and 1 in new_wall_positions ): pass
+                elif( 2 in new_wall_positions and 3 in new_wall_positions ): pass
+                else: self.current_was_pushed_into_corner = 1
+            elif(change_in_adjacent == 3): self.current_was_pushed_into_corner = 1
             else:
                 self.current_was_pushed_into_corner = 0
                 self.current_was_pushed_against_wall = 0         
