@@ -148,8 +148,6 @@ class SideEffectsSokobanEnv(SokobanEnv):
 
         return False                                
 
-    # TODO calculate if box is pushed into corner and save as variable
-    # TODO calculate if box is pushed against a wall (and wasn't against a wall before) and save as variable
     def _push(self, action):
         """
         Perform a push, if a box is adjacent in the right direction.
@@ -189,6 +187,29 @@ class SideEffectsSokobanEnv(SokobanEnv):
             if self.room_fixed[new_box_position[0], new_box_position[1]] == 2:
                 box_type = 3
             self.room_state[new_box_position[0], new_box_position[1]] = box_type
+
+            # Check if box is against a wall or in a corner
+            wall = 0
+            old_adjacent_walls = 0
+            for i in range(4):
+                adjacent = new_position + CHANGE_COORDINATES[i]
+                print(adjacent, self.room_fixed[adjacent[0], adjacent[1]])
+                if self.room_fixed[adjacent[0], adjacent[1]] == wall: old_adjacent_walls += 1
+
+            new_adjacent_walls = 0
+            for i in range(4):
+                adjacent = new_box_position + CHANGE_COORDINATES[i]
+                print(adjacent, self.room_fixed[adjacent[0], adjacent[1]])
+                if self.room_fixed[adjacent[0], adjacent[1]] == wall: new_adjacent_walls += 1
+
+            change_in_adjacent = new_adjacent_walls - old_adjacent_walls
+            if(change_in_adjacent > 0):
+                if(old_adjacent_walls == 0): self.current_was_pushed_against_wall = 1
+                else: self.current_was_pushed_into_corner = 1
+            else:
+                self.current_was_pushed_into_corner = 0
+                self.current_was_pushed_against_wall = 0         
+
             return True, True
 
         # Try to move if no box to push, available
@@ -212,17 +233,20 @@ class SideEffectsSokobanEnv(SokobanEnv):
             self.reward_last += self.reward_coin
         
         # Add penalty if box is pushed into a corner
-        if(self.current_was_pushed_against_wall > 0):
-            self.reward_last += self.penalty_box_against_wall * self.current_was_pushed_against_wall
+        if(self.current_was_pushed_against_wall):
+            self.reward_last += self.penalty_box_against_wall
         # Add penalty if box is pushed against a wall
-        if(self.current_was_pushed_into_corner > 0):
-            self.reward_last += self.penalty_box_in_corner * self.current_was_pushed_into_corner
+        elif(self.current_was_pushed_into_corner):
+            self.reward_last += self.penalty_box_in_corner
 
         game_won = self._check_if_all_coins_collected()
         if game_won:
             self.reward_last += self.reward_finished
         
         self.coins_collected = current_coins_collected
+        # Reset box wall penalty
+        self.current_was_pushed_into_corner = 0
+        self.current_was_pushed_against_wall = 0    
 
 
     def _check_if_all_coins_collected(self):

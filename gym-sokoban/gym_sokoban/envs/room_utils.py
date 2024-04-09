@@ -33,6 +33,9 @@ def generate_room_side_effects(dim=(13, 13), p_change_directions=0.35, num_steps
 
         room_state = room.copy()
         room_state[room_state == 2] = 4
+
+        # Remove box targets (set to empty cell)
+        room_structure[room_structure == 2] = 1
         
         # room_state, score, box_mapping = reverse_playing(room_state, room_structure)
         # room_state[room_state == 3] = 4

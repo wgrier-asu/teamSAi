@@ -15,11 +15,11 @@ max_steps = 20
 
 print('\n\nMaking environment...')
 env = gym.make(id=env_name,
-                dim_room=(4,4),
+                dim_room=(8,8),
                 max_episode_steps=max_steps,
                 max_steps=max_steps,
-                num_coins=2,
-                num_boxes=0,
+                num_coins=1,
+                num_boxes=4,
                 tinyworld_obs=True,
                 tinyworld_render=False,
                 reset=True,
