@@ -3,7 +3,15 @@ from .sokoban_env_fixed_targets import FixedTargetsSokobanEnv
 from .sokoban_env_pull import PushAndPullSokobanEnv
 from .sokoban_env_two_player import TwoPlayerSokobanEnv
 from .boxoban_env import BoxobanEnv, FixedBoxobanEnv
-from .sokoban_env_fixed_targets_v2 import FixedTargetsSokobanEnv2
+from .sokoban_env_side_effects import SideEffectsSokobanEnv
+
+class SideEffects_Env1(SideEffectsSokobanEnv):
+    def __init__(self, **kwargs):
+        kwargs['num_boxes'] = kwargs.get('num_boxes', 5)
+        kwargs['max_steps'] = kwargs.get('max_steps', 200)
+        kwargs['num_gen_steps'] = kwargs.get('num_gen_steps', 40)
+        kwargs['num_coins'] = kwargs.get('num_coins', 1)
+        super(SideEffects_Env1, self).__init__(**kwargs)
 
 class SokobanEnv1(SokobanEnv):
     def __init__(self, **kwargs):
@@ -71,14 +79,6 @@ class SokobanEnv_Huge0(SokobanEnv):
         kwargs['num_gen_steps'] = kwargs.get('num_gen_steps', 50)
         super(SokobanEnv_Huge0, self).__init__(**kwargs)
 
-
-class FixedTargets_Env_v2_0(FixedTargetsSokobanEnv2):
-    def __init__(self, **kwargs):
-        kwargs['dim_room'] = kwargs.get('dim_room', (10, 10))
-        kwargs['max_steps'] = kwargs.get('max_steps', 150)
-        kwargs['num_boxes'] = kwargs.get('num_boxes', 3)
-        kwargs['num_gen_steps'] = kwargs.get('num_gen_steps', 50)
-        super(FixedTargets_Env_v2_0, self).__init__(**kwargs)
 
 class FixedTargets_Env_v0(FixedTargetsSokobanEnv):
     def __init__(self, **kwargs):

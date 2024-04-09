@@ -39,7 +39,13 @@ def get_surfaces_and_dims() -> tuple[list, int]:
     wall_filename = pkg_resources.resource_filename(resource_package, '/'.join(('surface', 'wall.png')))
     wall = imageio.imread(wall_filename)
 
-    surfaces = [wall, floor, box_target, box_on_target, box, player, player_on_target]
+    coin_filename = pkg_resources.resource_filename(resource_package, '/'.join(('surface', 'coin.png')))
+    coin = imageio.imread(coin_filename)
+
+    player_on_coin_filename = pkg_resources.resource_filename(resource_package, '/'.join(('surface', 'player_on_target.png')))
+    player_on_coin = imageio.imread(player_on_coin_filename)
+
+    surfaces = [wall, floor, box_target, box_on_target, box, player, player_on_target, coin, player_on_coin]
 
     assert all(s.shape == wall.shape for s in surfaces), "All tiles must have the same shape"
 
@@ -62,6 +68,8 @@ def room_to_rgb(room, room_structure=None):
     if not room_structure is None:
         # Change the ID of a player on a target
         room[(room == 5) & (room_structure == 2)] = 6
+        # Change the ID of a player on a coin
+        room[(room == 5) & (room_structure == 7)] = 8
 
     # Assemble the new rgb_room, with all loaded images
     room_rgb = np.zeros(shape=(room.shape[0] * size, room.shape[1] * size, 3), dtype=np.uint8)
@@ -83,6 +91,8 @@ def room_to_tiny_world_rgb(room, room_structure=None, scale=1):
     if not room_structure is None:
         # Change the ID of a player on a target
         room[(room == 5) & (room_structure == 2)] = 6
+        # Change the ID of a player on a coin
+        room[(room == 5) & (room_structure == 7)] = 8
 
     wall = [0, 0, 0]
     floor = [243, 248, 238]
@@ -91,8 +101,10 @@ def room_to_tiny_world_rgb(room, room_structure=None, scale=1):
     box = [142, 121, 56]
     player = [160, 212, 56]
     player_on_target = [219, 212, 56]
+    coin = [255, 213, 0]
+    player_on_coin = [106, 255, 77]
 
-    surfaces = [wall, floor, box_target, box_on_target, box, player, player_on_target]
+    surfaces = [wall, floor, box_target, box_on_target, box, player, player_on_target, coin, player_on_coin]
 
     # Assemble the new rgb_room, with all loaded images
     room_small_rgb = np.zeros(shape=(room.shape[0]*scale, room.shape[1]*scale, 3), dtype=np.uint8)
@@ -144,7 +156,13 @@ def room_to_rgb_FT(room, box_mapping, room_structure=None):
     wall_filename = pkg_resources.resource_filename(resource_package, '/'.join(('surface', 'wall.png')))
     wall = imageio.imread(wall_filename)
 
-    surfaces = [wall, floor, box_target, box_on_target, box, player, player_on_target]
+    coin_filename = pkg_resources.resource_filename(resource_package, '/'.join(('surface', 'coin.png')))
+    coin = imageio.imread(coin_filename)
+
+    player_on_coin_filename = pkg_resources.resource_filename(resource_package, '/'.join(('surface', 'player_on_target.png')))
+    player_on_coin = imageio.imread(player_on_coin_filename)
+
+    surfaces = [wall, floor, box_target, box_on_target, box, player, player_on_target, coin, player_on_coin]
 
     # Assemble the new rgb_room, with all loaded images
     room_rgb = np.zeros(shape=(room.shape[0] * 16, room.shape[1] * 16, 3), dtype=np.uint8)
@@ -208,8 +226,10 @@ def room_to_tiny_world_rgb_FT(room, box_mapping, room_structure=None, scale=1):
         box = [142, 121, 56]
         player = [160, 212, 56]
         player_on_target = [219, 212, 56]
+        coin = [255, 213, 0]
+        player_on_coin = [106, 255, 77]
 
-        surfaces = [wall, floor, box_target, box_on_target, box, player, player_on_target]
+        surfaces = [wall, floor, box_target, box_on_target, box, player, player_on_target, coin, player_on_coin]
 
         # Assemble the new rgb_room, with all loaded images
         room_small_rgb = np.zeros(shape=(room.shape[0] * scale, room.shape[1] * scale, 3), dtype=np.uint8)

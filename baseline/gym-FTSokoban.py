@@ -1,6 +1,6 @@
 """
 Fixed Target Sokoban
-This script creates a FixedTargetSokoban environment. Agent takes random actions.
+This script creates a FixedTargetSokoban environment.  Agent takes random actions.
 """
 import gymnasium as gym
 from gymnasium.wrappers import HumanRendering, OrderEnforcing, RecordEpisodeStatistics
@@ -14,16 +14,13 @@ gym.pprint_registry()
 
 SEED = 1
 env_name = 'FixedTarget-Sokoban-v2-0'
-episodes = 2
+episodes = 1
 max_steps = 20
 
 print('\n\nMaking environment...')
 env = gym.make(id=env_name,
-                # dim_room=(3,3),
                 max_episode_steps=max_steps,
                 max_steps=max_steps,
-                # num_boxes=4,
-                # num_gen_steps=None,
                 tinyworld_obs=True,
                 tinyworld_render=False,
                 reset=True,
@@ -55,6 +52,7 @@ for i_episode in range(episodes):#20
         # Sleep makes the actions visible for users
         time.sleep(1)
         observation, reward, terminated, truncated, info = env.step(action)
+        
 
         print("a=[{}] r={} done={}||{} info={}".format(ACTION_LOOKUP[action], reward, terminated, truncated, info))
         if terminated or truncated:

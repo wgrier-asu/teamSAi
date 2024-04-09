@@ -2,16 +2,15 @@ import random
 import numpy as np
 import marshal
 
-
-def generate_room(dim=(13, 13), p_change_directions=0.35, num_steps=25, num_boxes=3, tries=4, second_player=False):
+def generate_room_side_effects(dim=(13, 13), p_change_directions=0.35, num_steps=25, num_boxes=3, tries=4, second_player=False, num_coins=0):
     """
     Generates a Sokoban room, represented by an integer matrix. The elements are encoded as follows:
     wall = 0
     empty space = 1
-    box target = 2
-    box not on target = 3
-    box on target = 4
+    box = 4
     player = 5
+    coin = 7
+    player on coin = 8
 
     :param dim:
     :param p_change_directions:
@@ -26,12 +25,60 @@ def generate_room(dim=(13, 13), p_change_directions=0.35, num_steps=25, num_boxe
     for t in range(tries):
         room = room_topology_generation(dim, p_change_directions, num_steps)
         room = place_boxes_and_player(room, num_boxes=num_boxes, second_player=second_player)
+        room = place_coins(room, num_coins=num_coins)
 
-        # Room fixed represents all not movable parts of the room
+
         room_structure = np.copy(room)
         room_structure[room_structure == 5] = 1
 
-        # Room structure represents the current state of the room including movable parts
+        room_state = room.copy()
+        room_state[room_state == 2] = 4
+        
+        # room_state, score, box_mapping = reverse_playing(room_state, room_structure)
+        # room_state[room_state == 3] = 4
+
+        # if score > 0:
+        #     break
+
+    # if score == 0:
+    #     raise RuntimeWarning('Generated Model with score == 0')
+
+    return room_structure, room_state
+
+
+
+def generate_room(dim=(13, 13), p_change_directions=0.35, num_steps=25, num_boxes=3, tries=4, second_player=False, num_coins=0):
+    """
+    Generates a Sokoban room, represented by an integer matrix. The elements are encoded as follows:
+    wall = 0
+    empty space = 1
+    box target = 2
+    box not on target = 3
+    box on target = 4
+    player = 5
+    player on target = 6
+    coin = 7
+    player on coin = 8
+
+    :param dim:
+    :param p_change_directions:
+    :param num_steps:
+    :return: Numpy 2d Array
+    """
+    room_state = np.zeros(shape=dim)
+    room_structure = np.zeros(shape=dim)
+
+    # Some times rooms with a score == 0 are the only possibility.
+    # In these case, we try another model.
+    for t in range(tries):
+        room = room_topology_generation(dim, p_change_directions, num_steps)
+        room = place_boxes_and_player(room, num_boxes=num_boxes, second_player=second_player)
+        room = place_coins(room, num_coins=num_coins)
+
+
+        room_structure = np.copy(room)
+        room_structure[room_structure == 5] = 1
+
         room_state = room.copy()
         room_state[room_state == 2] = 4
 
@@ -162,6 +209,36 @@ def place_boxes_and_player(room, num_boxes, second_player):
         ind = np.random.randint(num_possible_positions)
         box_position = possible_positions[0][ind], possible_positions[1][ind]
         room[box_position] = 2
+
+    return room
+
+
+def place_coins(room, num_coins):
+    """
+    Places the player and the boxes into the floors in a room.
+
+    :param room:
+    :param num_coins:
+    :return:
+    """
+    # Get all available positions
+    possible_positions = np.where(room == 1)
+    num_possible_positions = possible_positions[0].shape[0]
+
+    if num_possible_positions <= num_coins:
+        raise RuntimeError('Not enough free spots (#{}) to place {} coins.'.format(
+            num_possible_positions,
+            num_coins)
+        )
+
+    # Place coins
+    for n in range(num_coins):
+        possible_positions = np.where(room == 1)
+        num_possible_positions = possible_positions[0].shape[0]
+
+        ind = np.random.randint(num_possible_positions)
+        coin_position = possible_positions[0][ind], possible_positions[1][ind]
+        room[coin_position] = 7
 
     return room
 
@@ -325,7 +402,8 @@ TYPE_LOOKUP = {
     2: 'box target',
     3: 'box on target',
     4: 'box not on target',
-    5: 'player'
+    5: 'player',
+    6: 'coin'
 }
 
 ACTION_LOOKUP = {

@@ -1,5 +1,9 @@
 [
   {
+    "id": "SideEffects-v0",
+    "entry_point": "gym_sokoban.envs:SideEffects_Env1"
+  },
+  {
     "id": "Sokoban-v0",
     "entry_point": "gym_sokoban.envs:SokobanEnv1"
   },
@@ -34,10 +38,6 @@
   {
     "id": "Sokoban-huge-v0",
     "entry_point": "gym_sokoban.envs:SokobanEnv_Huge0"
-  },
-  {
-    "id": "FixedTarget-Sokoban-v2-0",
-    "entry_point": "gym_sokoban.envs:FixedTargets_Env_v2_0"
   },
   {
     "id": "FixedTarget-Sokoban-v0",
