@@ -9,17 +9,17 @@ import gym_sokoban
 gym.pprint_registry()
 
 SEED = 1
-env_name = 'Sokoban-v2'
-episodes = 2
-max_steps = 20
+env_name = 'SideEffects-v0'
+episodes = 1
+max_steps = 40
 
 print('\n\nMaking environment...')
 env = gym.make(id=env_name,
-                # dim_room=(3,3),
+                dim_room=(8,8),
                 max_episode_steps=max_steps,
                 max_steps=max_steps,
-                # num_boxes=4,
-                # num_gen_steps=None,
+                num_coins=1,
+                num_boxes=4,
                 tinyworld_obs=True,
                 tinyworld_render=False,
                 reset=True,
@@ -43,10 +43,11 @@ ACTION_LOOKUP = env.unwrapped.get_action_lookup()
 for i_episode in range(episodes):#20
     print('\n\nStarting episode #{}'.format(i_episode+1))
     observation, info = env.reset()
-
+    
     for t in range(max_steps+10):#100
         env.render()
-        action = env.action_space.sample()
+        # action = env.action_space.sample()
+        action = int(input("Enter action ==> "))
 
         # Sleep makes the actions visible for users
         time.sleep(1)
@@ -60,5 +61,5 @@ for i_episode in range(episodes):#20
             env.render()
             break
 
-env.close()
+# env.close()
 print('\nAll episodes complete.')
