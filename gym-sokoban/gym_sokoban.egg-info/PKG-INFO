@@ -1,5 +1,5 @@
 Metadata-Version: 2.1
-Name: gym_sokoban
+Name: gym-sokoban
 Version: 0.0.5
 Summary: Sokoban environment for OpenAI Gym
 Home-page: https://github.com/mpSchrader/gym-sokoban
@@ -9,11 +9,6 @@ Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
 Description-Content-Type: text/markdown
 License-File: LICENSE
-Requires-Dist: gym>=0.2.3
-Requires-Dist: numpy>=1.14.1
-Requires-Dist: tqdm>=4.32.1
-Requires-Dist: imageio>=2.3.0
-Requires-Dist: requests>=2.22.0
 
 # gym-sokoban 
 [Sokoban](https://en.wikipedia.org/wiki/Sokoban) is Japanese for warehouse keeper and a traditional video game.

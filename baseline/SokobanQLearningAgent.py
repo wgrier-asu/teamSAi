@@ -36,7 +36,7 @@ class QLearningAgent:
         self.num_tiles = num_tiles
         self.action_space_n = env.action_space.n
 
-        self.tile_coder = TileCoder(env.observation_space.low, env.observation_space.high, num_tiles, env.action_space.n)
+        self.tile_coder = TileCoder(env.observation_space.low[0], env.observation_space.high[0], num_tiles, env.action_space.n)
         self.q_table = np.zeros((self.tile_coder.total_tiles, self.action_space_n))
 
     def choose_action(self, state):
@@ -74,8 +74,51 @@ class TileCoder:
         self.tile_widths = (high - low) / num_tiles
 
     def encode(self, state):
+        #there should be a better way of doing this that breaks
         indices = []
         for i in range(self.dimensions):
+            print(i)
+            print(state[i])
             index = int((state[i] - self.low[i]) / self.tile_widths[i])
             indices.append(index)
         return sum([index * (self.num_tiles ** i) for i, index in enumerate(indices)])
+
+
+#Train the Agent
+print("Trainning Agent")
+numEpisodes=10
+qAgent = QLearningAgent(env)
+qAgent.train(numEpisodes)
+
+
+ACTION_LOOKUP = env.unwrapped.get_action_lookup()
+
+for i_episode in range(episodes):#20
+    print('\n\nStarting episode #{}'.format(i_episode+1))
+    observation, info = env.reset()
+    
+
+    for t in range(max_steps+10):#100
+        env.render()
+
+
+        # action = env.action_space.sample()
+        #action = int(input("Enter action ==> "))
+        action = QLearningAgent()
+
+
+
+
+        # Sleep makes the actions visible for users
+        time.sleep(1)
+        observation, reward, terminated, truncated, info = env.step(action)
+
+
+
+        print("a=[{}] r={} done={}||{} info={}".format(ACTION_LOOKUP[action], reward, terminated, truncated, info))
+        if terminated or truncated:
+            print("Episode finished after {} timesteps".format(t+1))
+            if(truncated): print("Reason: Truncated")
+            else: print("Reason: Terminated")
+            env.render()
+            break
