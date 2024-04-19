@@ -11,7 +11,7 @@ class SideEffectsSokobanEnv(SokobanEnv):
 
     def __init__(self,
             dim_room=(10, 10),
-            max_steps=120,
+            max_steps=100,
             num_boxes=3,
             num_coins=1,
             num_gen_steps=None,
