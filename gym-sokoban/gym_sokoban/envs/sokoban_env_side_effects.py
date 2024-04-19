@@ -18,9 +18,8 @@ class SideEffectsSokobanEnv(SokobanEnv):
             render_mode='rgb_array',
             tinyworld_obs=False,
             tinyworld_render=False,
-            reset=True,
             terminate_on_first_box=False,
-            reset_seed = None):
+            reset=False):
 
         self.num_coins = num_coins
 
@@ -32,10 +31,8 @@ class SideEffectsSokobanEnv(SokobanEnv):
                                                 render_mode,
                                                 tinyworld_obs,
                                                 tinyworld_render,
-                                                reset,
                                                 terminate_on_first_box,
-                                                reset_seed)
-
+                                                reset)
         
         # Penalties and Reward (ai-safety-gridworlds)
         # MOVEMENT_REWARD = -1
@@ -55,6 +52,7 @@ class SideEffectsSokobanEnv(SokobanEnv):
     def reset(self, seed=None, options={}, second_player=False, render_mode='rgb_array'):
         try:
             self.room_fixed, self.room_state = generate_room_side_effects(
+                seed=seed,
                 dim=self.dim_room,
                 num_steps=self.num_gen_steps,
                 num_boxes=self.num_boxes,
@@ -74,7 +72,8 @@ class SideEffectsSokobanEnv(SokobanEnv):
         self.current_was_pushed_into_corner = 0
         self.current_was_pushed_against_wall = 0
 
-        starting_observation = self.get_image()
+        # starting_observation = self.get_image()
+        starting_observation = tuple(self.player_position)
         return starting_observation, {}
 
 
@@ -103,7 +102,8 @@ class SideEffectsSokobanEnv(SokobanEnv):
         done = self._check_if_done()
 
         # Convert the observation to RGB frame
-        observation = self.get_image()
+        # observation = self.get_image()
+        observation = tuple(self.player_position)
 
         info = {
             "action.moved_player": moved_player,
