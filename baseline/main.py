@@ -10,11 +10,11 @@ from SokobanAgent import SokobanAgent
 # gym.pprint_registry()
 
 # Environment parameters
-SEED = 7
+SEED = 26 #26, 41, 84, 108, 116
 env_name = 'SideEffects-v0'
-render = False
+render = True
 display_rate = 0.2 # frequency of console logs
-episodes = 1000
+episodes = 10000
 room_size = 10
 
 # hyperparameters
@@ -57,6 +57,7 @@ agent = SokobanAgent(
     final_epsilon=final_epsilon,
     discount_factor=discount_factor,
 )
+
 
 
 for i_episode in range(episodes):

@@ -11,6 +11,8 @@ def generate_room_side_effects(seed=None, dim=(13, 13), p_change_directions=0.35
     player = 5
     coin = 7
     player on coin = 8
+    beta player = 9
+    beta player on coin = 10
 
     :param dim:
     :param p_change_directions:
@@ -24,12 +26,13 @@ def generate_room_side_effects(seed=None, dim=(13, 13), p_change_directions=0.35
     # In these case, we try another model.
     for t in range(tries):
         room = room_topology_generation(seed, dim, p_change_directions, num_steps)
-        room = place_coins(seed+1, room, num_coins=num_coins)
         room = place_boxes_and_player(seed+2, room, num_boxes=num_boxes, second_player=second_player)
+        room = place_coins(seed+1, room, num_coins=num_coins)
 
 
         room_structure = np.copy(room)
         room_structure[room_structure == 5] = 1
+        room_structure[room_structure == 9] = 1
 
         room_state = room.copy()
         room_state[room_state == 2] = 4
@@ -47,54 +50,6 @@ def generate_room_side_effects(seed=None, dim=(13, 13), p_change_directions=0.35
     #     raise RuntimeWarning('Generated Model with score == 0')
 
     return room_structure, room_state
-
-
-
-def generate_room(dim=(13, 13), p_change_directions=0.35, num_steps=25, num_boxes=3, tries=4, second_player=False, num_coins=0):
-    """
-    Generates a Sokoban room, represented by an integer matrix. The elements are encoded as follows:
-    wall = 0
-    empty space = 1
-    box target = 2
-    box not on target = 3
-    box on target = 4
-    player = 5
-    player on target = 6
-    coin = 7
-    player on coin = 8
-
-    :param dim:
-    :param p_change_directions:
-    :param num_steps:
-    :return: Numpy 2d Array
-    """
-    room_state = np.zeros(shape=dim)
-    room_structure = np.zeros(shape=dim)
-
-    # Some times rooms with a score == 0 are the only possibility.
-    # In these case, we try another model.
-    for t in range(tries):
-        room = room_topology_generation(dim, p_change_directions, num_steps)
-        room = place_boxes_and_player(room, num_boxes=num_boxes, second_player=second_player)
-        room = place_coins(room, num_coins=num_coins)
-
-
-        room_structure = np.copy(room)
-        room_structure[room_structure == 5] = 1
-
-        room_state = room.copy()
-        room_state[room_state == 2] = 4
-
-        room_state, score, box_mapping = reverse_playing(room_state, room_structure)
-        room_state[room_state == 3] = 4
-
-        if score > 0:
-            break
-
-    if score == 0:
-        raise RuntimeWarning('Generated Model with score == 0')
-
-    return room_structure, room_state, box_mapping
 
 
 def room_topology_generation(seed=None, dim=(10, 10), p_change_directions=0.35, num_steps=15):
@@ -201,6 +156,8 @@ def place_boxes_and_player(seed, room, num_boxes, second_player):
     player_position = possible_positions[0][ind], possible_positions[1][ind]
     room[player_position] = 5
 
+    possible_positions = np.where(room == 1)
+    num_possible_positions = possible_positions[0].shape[0]
     if second_player:
         ind = int(num_possible_positions* rng.random())
         player_position = possible_positions[0][ind], possible_positions[1][ind]
