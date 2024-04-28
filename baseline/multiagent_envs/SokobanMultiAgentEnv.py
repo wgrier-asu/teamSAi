@@ -184,7 +184,7 @@ class SokobanMultiAgentEnv(AECEnv):
         self.observations = { a: self.room_state for a in self.agents }
 
         # ALPHA player must always finish
-        if self.terminations['ALPHA']:
+        if all(self.terminations.values()):
             self.agents = []
         elif all(self.truncations.values()):
             self.agents = []
