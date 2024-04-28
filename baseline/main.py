@@ -10,7 +10,7 @@ from SokobanAgent import SokobanAgent
 # gym.pprint_registry()
 
 # Environment parameters
-SEED = 26 #26, 41, 84, 108, 116
+SEED = 108 #26, 41, 84, 108, 116
 env_name = 'SideEffects-v0'
 render = True
 display_rate = 0.2 # frequency of console logs

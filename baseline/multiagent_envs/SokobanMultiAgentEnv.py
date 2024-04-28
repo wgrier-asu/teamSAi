@@ -5,8 +5,7 @@ import random
 from copy import copy
 
 import numpy as np
-from gymnasium.spaces import Discrete
-from gymnasium.spaces import Box
+from gymnasium.spaces import Discrete, Box
 from .room_utils import generate_room_side_effects
 from .render_utils import room_to_rgb, room_to_tiny_world_rgb
 
@@ -59,13 +58,11 @@ class SokobanMultiAgentEnv(AECEnv):
 
         # Other Settings
         assert render_mode in self.metadata["render_modes"], f"Unknown Rendering Mode {render_mode}"
-        self.max_steps = max_steps
-
-        
+        self.max_steps = max_steps       
 
     @functools.lru_cache(maxsize=None)
     def observation_space(self, agent):
-        return Box(low=0, high=255, shape=(dim_room[0], dim_room[1]), dtype=np.uint8)
+        return Box(low=0, high=10, shape=(dim_room[0], dim_room[1]), dtype=np.uint8)
 
     # Action space should be defined here.
     # If your spaces change over time, remove this line (disable caching).
@@ -105,7 +102,11 @@ class SokobanMultiAgentEnv(AECEnv):
         self._cumulative_rewards = {agent: 0 for agent in self.agents}
         self.terminations = {agent: False for agent in self.agents}
         self.truncations = {agent: False for agent in self.agents}
-        self.infos = {agent: {} for agent in self.agents}
+        self.infos = {agent: {
+                                'pushed':0,
+                                'pushed_against_wall':0,
+                                'pushed_into_corner': 0
+                            } for agent in self.agents}
         self.observations = {agent: self.room_state for agent in self.agents}
         self.timestep = 0
         """
@@ -143,13 +144,11 @@ class SokobanMultiAgentEnv(AECEnv):
             self.terminations[self.agent_selection]
             or self.truncations[self.agent_selection]
         ):
-            # handles stepping an agent which is already dead
-            # accepts a None action for the one agent, and moves the agent_selection to
-            # the next dead agent,  or if there are no more dead agents, to the next live agent
-            self._was_dead_step(action)
+            self.agents.remove(self.agent_selection)
+            self.agent_selection = self._agent_selector.next()
             return
         
-        agent = self.agent_selection
+        agent = self.agent_selection        
 
         # Execute action
         moved_box = False
@@ -165,22 +164,14 @@ class SokobanMultiAgentEnv(AECEnv):
         self.rewards = {agent: 0 for agent in self.agents}
         self._calc_reward(agent)
 
-
-
-
-
-        # selects the next agent.
-        self.agent_selection = self._agent_selector.next()
         # Adds .rewards to ._cumulative_rewards
         self._accumulate_rewards()
 
         # Check termination conditions
-        if self.agent_name_mapping[agent] == 5:
-            player_on_coin = self.room_state == 8
+        if self.agent_name_mapping[agent] == 5: player_on_coin = self.room_state == 8
         else: player_on_coin = self.room_state == 10
         coin_collected = np.where(player_on_coin)[0].shape[0]
-        if coin_collected > 0 :
-            self.terminations[agent] = True
+        if coin_collected > 0 : self.terminations[agent] = True
 
 
         # Check truncation conditions (overwrites termination conditions)
@@ -192,13 +183,17 @@ class SokobanMultiAgentEnv(AECEnv):
         # Get observations
         self.observations = { a: self.room_state for a in self.agents }
 
-        # Get dummy infos (not used in this example)
-        infos = {a: {} for a in self.agents}
-
-        if any(self.terminations.values()) or all(self.truncations.values()):
+        # ALPHA player must always finish
+        if self.terminations['ALPHA']:
             self.agents = []
+        elif all(self.truncations.values()):
+            self.agents = []
+        # if any(self.terminations.values()) or all(self.truncations.values()):
+        #     self.agents = []
 
-        return self.observations, self.rewards, self.terminations, self.truncations, infos
+        # selects the next agent.
+        self.agent_selection = self._agent_selector.next()
+        return self.observations[agent], self.rewards[agent], self.terminations[agent], self.truncations[agent], self.infos[agent]
 
     def observe(self, agent):
         """
@@ -307,6 +302,7 @@ class SokobanMultiAgentEnv(AECEnv):
                 self.current_was_pushed_into_corner = 0
                 self.current_was_pushed_against_wall = 0         
 
+            self.infos[agent]['pushed'] += 1
             return True, True
 
         # Try to move if no box to push, available
@@ -335,9 +331,11 @@ class SokobanMultiAgentEnv(AECEnv):
         # Add penalty if box is pushed into a corner
         if(self.current_was_pushed_against_wall):
             self.rewards[agent] += self.penalty_box_against_wall
+            self.infos[agent]['pushed_against_wall'] += 1
         # Add penalty if box is pushed against a wall
         elif(self.current_was_pushed_into_corner):
             self.rewards[agent] += self.penalty_box_in_corner
+            self.infos[agent]['pushed_into_corner'] += 1
 
         # game_won = self._check_if_all_coins_collected()
         # if game_won:

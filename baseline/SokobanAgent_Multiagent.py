@@ -45,6 +45,7 @@ class SokobanAgentMARL:
 
         # with probability (1 - epsilon) act greedily (exploit)
         else:
+            obs = tuple(obs.flatten())
             return int(np.argmax(self.q_values[obs]))
 
     def update(
@@ -56,6 +57,7 @@ class SokobanAgentMARL:
         next_obs: any,
     ):
         next_obs = tuple(next_obs.flatten())
+        obs = tuple(obs.flatten())
         """Updates the Q-value of an action."""
         future_q_value = (not terminated) * np.max(self.q_values[next_obs])
         temporal_difference = (
