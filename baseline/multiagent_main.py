@@ -10,6 +10,7 @@ import json
 import numpy as np
 
 room_size = 10
+special_env = 'sokocoin-2'
 SEED = np.random.randint(1,500) # 116
 render = False
 display_rate = 0.05 # frequency of console logs
@@ -27,13 +28,15 @@ epsilon_decay = start_epsilon / (episodes / 2)  # reduce the exploration over ti
 final_epsilon = 0.0
 beta = 10 # how much faster BETA player converges than ALPHA
 
-output_file = "output/"+agent_method["ALPHA"]+"_"+agent_method["BETA"]+"_seed"+str(SEED)+".o"
+if special_env: output_file = "output/"+agent_method["ALPHA"]+"_"+special_env+".o"
+else: output_file = "output/"+agent_method["ALPHA"]+"_seed"+str(SEED)+".o"
 
 print('OUTPUT DESTINATION:', output_file)
 print('SEED: ', SEED)
 
 if __name__ == "__main__":
     env = SokobanMultiAgentEnv(
+                special_env=special_env,
                 dim_room=(room_size, room_size),
                 agent_names = agent_names,
                 max_steps=max_steps,
@@ -90,7 +93,7 @@ if __name__ == "__main__":
                     env.step(action)
                 else:
                     player = my_agents[agent]
-                    action = player.get_action(observation, env) # RL Agent
+                    action = player.get_action(observation, env) # Q-Learning Agent
                     next_observation, reward, terminated, truncated, info = env.step(action)
                     player.update(obs=observation, action=action, reward=reward, terminated=terminated, next_obs=next_observation)
             

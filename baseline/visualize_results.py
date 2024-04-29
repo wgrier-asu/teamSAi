@@ -5,7 +5,7 @@ import glob
 
 
 # We will get the average over all input files
-input_files = glob.glob('output/random_QLearning*.o', recursive=False)
+input_files = glob.glob('output/*sokocoin-2*.o', recursive=False)
 print(input_files)
 
 agent_names = ["ALPHA", "BETA"]
@@ -36,6 +36,9 @@ for file_name in input_files:
         wall_beta.append([d['info'][agent_names[1]]['pushed_against_wall'] for d in myjson])
         corner_beta.append([d['info'][agent_names[1]]['pushed_into_corner'] for d in myjson])
         rfile.close()
+
+for r in rewards_alpha:
+    print(r[-1])
 
 # Get average over all random experiments
 avg_rewards_alpha   = np.array(rewards_alpha).mean(axis=0)
