@@ -4,7 +4,7 @@ import time
 # https://github.com/AlignmentResearch/gym-sokoban/tree/default
 # Download gym-sokoban and build library locally
 import gym_sokoban
-from SokobanAgent import SokobanAgent
+from agents.SokobanAgent import SokobanAgent
 
 # You should see the sokoban environments in this list:
 # gym.pprint_registry()

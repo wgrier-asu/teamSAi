@@ -5,11 +5,12 @@ sys.path.append('../')
 from baseline.multiagent_envs.SokobanMultiAgentEnv import *
 from pettingzoo.test import api_test
 from gymnasium.wrappers import HumanRendering, OrderEnforcing, RecordEpisodeStatistics
-from SokobanAgent_Multiagent import SokobanAgentMARL
+from agents.SokobanAgent_Multiagent import SokobanAgentMARL
 import json
+import numpy as np
 
 room_size = 10
-SEED = 116
+SEED = np.random.randint(1,500) # 116
 render = False
 display_rate = 0.05 # frequency of console logs
 agent_names = ["ALPHA", "BETA"]
@@ -17,16 +18,19 @@ agent_method = {agent_names[0]: 'random', agent_names[1]: 'QLearning'} # set ran
 max_steps = 100 # steps (combined agents) per episode
 episodes = 100_000
 
-output_file = "output/"+agent_method["ALPHA"]+"_"+agent_method["BETA"]+"_seed"+str(SEED)+".o"
 
-
-# agent hyperparameters
 discount_factor = 0.95
+# agent hyperparameters
 learning_rate = 0.01
 start_epsilon = 1.0
 epsilon_decay = start_epsilon / (episodes / 2)  # reduce the exploration over time
-final_epsilon = 0.1
+final_epsilon = 0.0
+beta = 10 # how much faster BETA player converges than ALPHA
 
+output_file = "output/"+agent_method["ALPHA"]+"_"+agent_method["BETA"]+"_seed"+str(SEED)+".o"
+
+print('OUTPUT DESTINATION:', output_file)
+print('SEED: ', SEED)
 
 if __name__ == "__main__":
     env = SokobanMultiAgentEnv(
@@ -54,9 +58,9 @@ if __name__ == "__main__":
     agentB = SokobanAgentMARL(
         name=agent_names[1],
         env=env,
-        learning_rate=learning_rate,
+        learning_rate=learning_rate*beta,
         initial_epsilon=start_epsilon,
-        epsilon_decay=epsilon_decay,
+        epsilon_decay=epsilon_decay*beta,
         final_epsilon=final_epsilon,
         discount_factor=discount_factor,
     )
@@ -110,3 +114,7 @@ if __name__ == "__main__":
 
     with open(output_file, "w") as file:
         json.dump(data, file)
+
+    
+    print('OUTPUT DESTINATION:', output_file)
+    print('SEED: ', SEED)
