@@ -5,7 +5,7 @@ import glob
 
 
 # We will get the average over all input files
-input_files = glob.glob('output/*sokocoin-2*.o', recursive=False)
+input_files = glob.glob('output/random*sokocoin-3*.o', recursive=False)
 print(input_files)
 
 agent_names = ["ALPHA", "BETA"]
