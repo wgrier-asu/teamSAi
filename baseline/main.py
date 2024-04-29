@@ -4,13 +4,13 @@ import time
 # https://github.com/AlignmentResearch/gym-sokoban/tree/default
 # Download gym-sokoban and build library locally
 import gym_sokoban
-from SokobanAgent import SokobanAgent
+from agents.SokobanAgent import SokobanAgent
 
 # You should see the sokoban environments in this list:
 # gym.pprint_registry()
 
 # Environment parameters
-SEED = 108
+SEED = 108 #26, 41, 84, 108, 116
 env_name = 'SideEffects-v0'
 render = False
 display_rate = 0.2 # frequency of console logs
@@ -200,7 +200,6 @@ def create_grids(agent):
     state_value = defaultdict(float)
     policy = defaultdict(int)
     for obs, action_values in agent.q_values.items():
-
         state_value[obs] = float(np.max(action_values))
         policy[obs] = int(np.argmax(action_values))
 
@@ -240,6 +239,8 @@ def create_plots(value_grid, policy_grid, title: str):
 
     # plot the state values
     ax1 = fig.add_subplot(1, 2, 1)
+    
+    # ax2 = sns.heatmap(value, linewidth=0, annot=True, cmap="viridis", cbar=False)
     ax2 = sns.heatmap(value, linewidth=0, annot=True, cmap="viridis", cbar=False)
     plt.xticks(range(0, room_size), range(0, room_size))
     plt.yticks(range(0, room_size), range(0, room_size))
@@ -248,8 +249,9 @@ def create_plots(value_grid, policy_grid, title: str):
     ax1.set_ylabel("y coordinate")
 
     # plot the policy
+    color_map = ['gray', 'indianred', 'forestgreen', 'royalblue', 'orange', 'pink', 'palegreen', 'skyblue', 'bisque']
     fig.add_subplot(1, 2, 2)
-    ax2 = sns.heatmap(policy_grid, linewidth=0, annot=True, cmap="crest", cbar=False)
+    ax2 = sns.heatmap(policy_grid, linewidth=0, annot=True, cmap=color_map, cbar=False)
     ax2.set_title(f"Policy: {title}")
     ax2.set_xlabel("x coordinate", loc='center')
     ax2.set_ylabel("y coordinate")
@@ -258,15 +260,15 @@ def create_plots(value_grid, policy_grid, title: str):
 
     # add a legend
     legend_elements = [
-        Patch(label="0 NOOP"),
-        Patch(label="1 Push Up"),
-        Patch(label="2 Push Down"),
-        Patch(label="3 Push Left"),
-        Patch(label="4 Push Right"),
-        Patch(label="5 Move Up"),
-        Patch(label="6 Move Down"),
-        Patch(label="7 Move Left"),
-        Patch(label="8 Move Right"),
+        Patch(facecolor=color_map[0],  label="0 NOOP"),
+        Patch(facecolor=color_map[1],  label="1 Push Up"),
+        Patch(facecolor=color_map[2],  label="2 Push Down"),
+        Patch(facecolor=color_map[3],  label="3 Push Left"),
+        Patch(facecolor=color_map[4],  label="4 Push Right"),
+        Patch(facecolor=color_map[5],  label="5 Move Up"),
+        Patch(facecolor=color_map[6],  label="6 Move Down"),
+        Patch(facecolor=color_map[7],  label="7 Move Left"),
+        Patch(facecolor=color_map[8],  label="8 Move Right"),
     ]
     ax2.legend(handles=legend_elements, bbox_to_anchor=(1.3, 1))
     return fig

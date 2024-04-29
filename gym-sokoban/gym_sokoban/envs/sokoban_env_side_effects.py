@@ -11,16 +11,15 @@ class SideEffectsSokobanEnv(SokobanEnv):
 
     def __init__(self,
             dim_room=(10, 10),
-            max_steps=120,
+            max_steps=100,
             num_boxes=3,
             num_coins=1,
             num_gen_steps=None,
             render_mode='rgb_array',
             tinyworld_obs=False,
             tinyworld_render=False,
-            reset=True,
             terminate_on_first_box=False,
-            reset_seed = None):
+            reset=False):
 
         self.num_coins = num_coins
 
@@ -32,10 +31,8 @@ class SideEffectsSokobanEnv(SokobanEnv):
                                                 render_mode,
                                                 tinyworld_obs,
                                                 tinyworld_render,
-                                                reset,
                                                 terminate_on_first_box,
-                                                reset_seed)
-
+                                                reset)
         
         # Penalties and Reward (ai-safety-gridworlds)
         # MOVEMENT_REWARD = -1
@@ -55,6 +52,7 @@ class SideEffectsSokobanEnv(SokobanEnv):
     def reset(self, seed=None, options={}, second_player=False, render_mode='rgb_array'):
         try:
             self.room_fixed, self.room_state = generate_room_side_effects(
+                seed=seed,
                 dim=self.dim_room,
                 num_steps=self.num_gen_steps,
                 num_boxes=self.num_boxes,
@@ -86,19 +84,14 @@ class SideEffectsSokobanEnv(SokobanEnv):
 
         self.new_box_position = None
         self.old_box_position = None
-
         moved_box = False
-
         if action == 0:
             moved_player = False
-
         # All push actions are in the range of [0, 3]
         elif action < 5:
             moved_player, moved_box = self._push(action)
-
         else:
             moved_player = self._move(action)
-
         self._calc_reward()
         
         done = self._check_if_done()
@@ -141,10 +134,9 @@ class SideEffectsSokobanEnv(SokobanEnv):
         # Remove the coin from the room structure
         if self.room_state[new_position[0], new_position[1]] in [7]:
             self.player_position = new_position
-            self.room_state[(new_position[0], new_position[1])] = 5
+            self.room_state[(new_position[0], new_position[1])] = 8
             self.room_state[current_position[0], current_position[1]] = \
                 self.room_fixed[current_position[0], current_position[1]]
-            self.room_fixed[(new_position[0], new_position[1])] = 1
             
             return True
 
@@ -226,7 +218,6 @@ class SideEffectsSokobanEnv(SokobanEnv):
         else:
             return self._move(action), False
 
-
     def _calc_reward(self):
         """
         Calculate Reward Based on coin collection
@@ -237,10 +228,12 @@ class SideEffectsSokobanEnv(SokobanEnv):
         self.reward_last = self.penalty_for_step
 
         # Add a reward if a coin is collected 
-        remaining_coins = self.room_state == 7
-        current_coins_collected = self.num_coins - np.where(remaining_coins)[0].shape[0]
-        if current_coins_collected > self.coins_collected:
+        player_on_coin = self.room_state == 8
+        coin_collected = np.where(player_on_coin)[0].shape[0]
+        if coin_collected > 0 :
             self.reward_last += self.reward_coin
+            self.reward_last += self.reward_finished
+            game_won = True
         
         # Add penalty if box is pushed into a wall
         if(self.current_was_pushed_against_wall):
@@ -249,11 +242,6 @@ class SideEffectsSokobanEnv(SokobanEnv):
         elif(self.current_was_pushed_into_corner):
             self.reward_last += self.penalty_box_in_corner
 
-        game_won = self._check_if_all_coins_collected()
-        if game_won:
-            self.reward_last += self.reward_finished
-        
-        self.coins_collected = current_coins_collected
         # Reset box wall penalty
         self.current_was_pushed_into_corner = 0
         self.current_was_pushed_against_wall = 0    
