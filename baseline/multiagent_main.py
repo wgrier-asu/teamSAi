@@ -14,7 +14,7 @@ SEED = np.random.randint(1,500) # 116
 render = False
 display_rate = 0.05 # frequency of console logs
 agent_names = ["ALPHA", "BETA"]
-agent_method = {agent_names[0]: 'random', agent_names[1]: 'QLearning'} # set random or QLearning
+agent_method = {agent_names[0]: 'QLearning', agent_names[1]: 'QLearning'} # set random or QLearning
 max_steps = 100 # steps (combined agents) per episode
 episodes = 100_000
 
