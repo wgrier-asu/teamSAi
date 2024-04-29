@@ -23,9 +23,9 @@ def generate_room_side_effects(dim=(13, 13), p_change_directions=0.35, num_steps
     # Some times rooms with a score == 0 are the only possibility.
     # In these case, we try another model.
     for t in range(tries):
-        room = room_topology_generation(dim, p_change_directions, num_steps)
-        room = place_boxes_and_player(room, num_boxes=num_boxes, second_player=second_player)
-        room = place_coins(room, num_coins=num_coins)
+        room = room_topology_generation(seed, dim, p_change_directions, num_steps)
+        room = place_boxes_and_player(seed+2, room, num_boxes=num_boxes, second_player=second_player)
+        room = place_coins(seed+1, room, num_coins=num_coins)
 
 
         room_structure = np.copy(room)

@@ -74,7 +74,8 @@ class SideEffectsSokobanEnv(SokobanEnv):
         self.current_was_pushed_into_corner = 0
         self.current_was_pushed_against_wall = 0
 
-        starting_observation = self.get_image()
+        # starting_observation = self.get_image()
+        starting_observation = str(self.room_state.flatten())
         return starting_observation, {}
 
 
@@ -103,7 +104,8 @@ class SideEffectsSokobanEnv(SokobanEnv):
         done = self._check_if_done()
 
         # Convert the observation to RGB frame
-        observation = self.get_image()
+        # observation = self.get_image()
+        observation = str(self.room_state.flatten())
 
         info = {
             "action.moved_player": moved_player,
@@ -240,10 +242,10 @@ class SideEffectsSokobanEnv(SokobanEnv):
         if current_coins_collected > self.coins_collected:
             self.reward_last += self.reward_coin
         
-        # Add penalty if box is pushed into a corner
+        # Add penalty if box is pushed into a wall
         if(self.current_was_pushed_against_wall):
             self.reward_last += self.penalty_box_against_wall
-        # Add penalty if box is pushed against a wall
+        # Add penalty if box is pushed against a corner
         elif(self.current_was_pushed_into_corner):
             self.reward_last += self.penalty_box_in_corner
 
