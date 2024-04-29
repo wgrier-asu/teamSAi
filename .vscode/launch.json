@@ -8,7 +8,7 @@
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
-            "program": "baseline/main.py",
+            "program": "baseline/multiagent_main.py",
             "console": "integratedTerminal"
         }
     ]

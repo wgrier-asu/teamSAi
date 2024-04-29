@@ -11,7 +11,7 @@ import numpy as np
 
 room_size = 10
 SEED = np.random.randint(1,500) # 116
-render = True
+render = False
 display_rate = 0.05 # frequency of console logs
 agent_names = ["ALPHA", "BETA"]
 agent_method = {agent_names[0]: 'QLearning', agent_names[1]: 'QLearning'} # set random or QLearning
@@ -73,7 +73,8 @@ if __name__ == "__main__":
 
     data = []
     for i_episode in range(episodes):
-        if((i_episode+1) % max(1,int(episodes*display_rate)) == 0): print('\nEpisode #{}/{}'.format(i_episode+1, episodes))
+        if((i_episode+1) % max(1,int(episodes*display_rate)) == 0): 
+            print('\nEpisode #{}/{}'.format(i_episode+1, episodes))
         observation, info = env.reset(seed=SEED)
 
         for agent in env.unwrapped.agent_iter():
