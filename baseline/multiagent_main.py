@@ -2,7 +2,7 @@
 import sys
 sys.path.append('../')
 
-from baseline.multiagent_envs.SokobanMultiAgentEnv import *
+from multiagent_envs.SokobanMultiAgentEnv import *
 from pettingzoo.test import api_test
 from gymnasium.wrappers import HumanRendering, OrderEnforcing, RecordEpisodeStatistics
 from agents.SokobanAgent_Multiagent import SokobanAgentMARL
@@ -11,7 +11,7 @@ import numpy as np
 
 room_size = 10
 SEED = np.random.randint(1,500) # 116
-render = False
+render = True
 display_rate = 0.05 # frequency of console logs
 agent_names = ["ALPHA", "BETA"]
 agent_method = {agent_names[0]: 'QLearning', agent_names[1]: 'QLearning'} # set random or QLearning

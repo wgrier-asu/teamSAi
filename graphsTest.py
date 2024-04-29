@@ -173,9 +173,9 @@ def create_plots(value_grid, policy_grid, title: str):
 
 
 # state values & policy with usable ace (ace counts as 11)
-value_grid, policy_grid = create_grids(agent)
-fig1 = create_plots(value_grid, policy_grid, title="Sokoban Agent")
-plt.show()
+#value_grid, policy_grid = create_grids(agent)
+#fig1 = create_plots(value_grid, policy_grid, title="Sokoban Agent")
+#plt.show()
 
 
 
