@@ -54,13 +54,13 @@ def moving_average(x, w):
 # Visualize Results
 rolling_length = 1000
 
-fig, axs = plt.subplots(ncols=3, figsize=(13, 5))
+fig, axs = plt.subplots(ncols=2, figsize=(13, 5))
 axs[0].set_title("Player Rewards")
 r_alpha = moving_average(avg_rewards_alpha, rolling_length)
 arr_length = len(r_alpha)
 axs[0].plot(range(arr_length), moving_average(avg_rewards_alpha, rolling_length))
-axs[0].plot(range(arr_length), moving_average(avg_rewards_beta, rolling_length))
-axs[0].legend(['ALPHA', 'BETA'])
+# axs[0].plot(range(arr_length), moving_average(avg_rewards_beta, rolling_length))
+# axs[0].legend(['ALPHA', 'BETA'])
 
 axs[1].set_title("Box Side Effects")
 axs[1].plot(range(arr_length), moving_average(avg_pushed_alpha, rolling_length))
@@ -68,8 +68,8 @@ axs[1].plot(range(arr_length), moving_average(avg_wall_alpha, rolling_length))
 axs[1].plot(range(arr_length), moving_average(avg_corner_alpha, rolling_length))
 axs[1].legend(['pushed', 'pushed to wall', 'pushed to corner'])
 
-axs[2].set_title("Episode Length")
-axs[2].plot(range(arr_length), moving_average(avg_episode_lengths, rolling_length))
+# axs[2].set_title("Episode Length")
+# axs[2].plot(range(arr_length), moving_average(avg_episode_lengths, rolling_length))
 
 plt.tight_layout()
 plt.show()
