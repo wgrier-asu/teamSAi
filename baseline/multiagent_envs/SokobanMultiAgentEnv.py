@@ -1,12 +1,10 @@
-
-
 import functools
 import random
 from copy import copy
 
 import numpy as np
 from gymnasium.spaces import Discrete, Box
-from .room_utils import generate_room_side_effects
+from .room_utils import generate_room_side_effects, generate_sokocoin_3_room, generate_sokocoin_2_room
 from .render_utils import room_to_rgb, room_to_tiny_world_rgb
 
 from pettingzoo import AECEnv
@@ -34,7 +32,8 @@ class SokobanMultiAgentEnv(AECEnv):
                 num_gen_steps=None,
                 render_mode='rgb_array',
                 tinyworld_obs=False,
-                tinyworld_render=False):
+                tinyworld_render=False,
+                special_env=None):
 
         self.possible_agents = agent_names
         self.agent_name_mapping = dict(
@@ -58,7 +57,8 @@ class SokobanMultiAgentEnv(AECEnv):
 
         # Other Settings
         assert render_mode in self.metadata["render_modes"], f"Unknown Rendering Mode {render_mode}"
-        self.max_steps = max_steps       
+        self.max_steps = max_steps   
+        self.special_env = special_env    
 
     @functools.lru_cache(maxsize=None)
     def observation_space(self, agent):
@@ -83,14 +83,20 @@ class SokobanMultiAgentEnv(AECEnv):
         Generate Room State
         """
         try:
-            self.room_fixed, self.room_state = generate_room_side_effects(
-                seed=seed,
-                dim=self.dim_room,
-                num_steps=self.num_gen_steps,
-                num_boxes=self.num_boxes,
-                num_coins=self.num_coins,
-                second_player=True
-            )
+            if self.special_env:
+                if self.special_env == 'sokocoin-3':
+                    self.room_fixed, self.room_state = generate_sokocoin_3_room()
+                else:
+                    self.room_fixed, self.room_state = generate_sokocoin_2_room()
+            else:
+                self.room_fixed, self.room_state = generate_room_side_effects(
+                    seed=seed,
+                    dim=self.dim_room,
+                    num_steps=self.num_gen_steps,
+                    num_boxes=self.num_boxes,
+                    num_coins=self.num_coins,
+                    second_player=True
+                )
         except (RuntimeError, RuntimeWarning) as e:
             print("[SOKOBAN] Runtime Error/Warning: {}".format(e))
             print("[SOKOBAN] Retry . . .")

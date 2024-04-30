@@ -5,7 +5,7 @@ import glob
 
 
 # We will get the average over all input files
-input_files = glob.glob('output/random_QLearning*.o', recursive=False)
+input_files = glob.glob('output/future*.o', recursive=False)
 print(input_files)
 
 agent_names = ["ALPHA", "BETA"]

@@ -9,14 +9,15 @@ from agents.SokobanAgent_Multiagent import SokobanAgentMARL
 import json
 import numpy as np
 
+special_env = None # overwrites SEED and room_size
 room_size = 10
-SEED = np.random.randint(1,500) # 116
+SEED = np.random.randint(1,500) # 116 is a good example
 render = False
 display_rate = 0.05 # frequency of console logs
 agent_names = ["ALPHA", "BETA"]
-agent_method = {agent_names[0]: 'QLearning', agent_names[1]: 'QLearning'} # set random or QLearning
+agent_method = {agent_names[0]: 'future', agent_names[1]: 'QLearning'} # set random or QLearning
 max_steps = 100 # steps (combined agents) per episode
-episodes = 100_000
+episodes = 10_000
 
 
 discount_factor = 0.95
@@ -27,13 +28,14 @@ epsilon_decay = start_epsilon / (episodes / 2)  # reduce the exploration over ti
 final_epsilon = 0.0
 beta = 10 # how much faster BETA player converges than ALPHA
 
-output_file = "output/"+agent_method["ALPHA"]+"_"+agent_method["BETA"]+"_seed"+str(SEED)+".o"
+if special_env: output_file = "output/"+agent_method["ALPHA"]+"_"+special_env+".o"
+else: output_file = "output/"+agent_method["ALPHA"]+"_seed"+str(SEED)+".o"
 
 print('OUTPUT DESTINATION:', output_file)
-print('SEED: ', SEED)
 
 if __name__ == "__main__":
     env = SokobanMultiAgentEnv(
+                special_env=special_env,
                 dim_room=(room_size, room_size),
                 agent_names = agent_names,
                 max_steps=max_steps,
@@ -118,4 +120,3 @@ if __name__ == "__main__":
 
     
     print('OUTPUT DESTINATION:', output_file)
-    print('SEED: ', SEED)
