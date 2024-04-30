@@ -37,6 +37,9 @@ for file_name in input_files:
         corner_beta.append([d['info'][agent_names[1]]['pushed_into_corner'] for d in myjson])
         rfile.close()
 
+for r in rewards_alpha:
+    print(r[-1])
+
 # Get average over all random experiments
 avg_rewards_alpha   = np.array(rewards_alpha).mean(axis=0)
 avg_rewards_beta    = np.array(rewards_beta).mean(axis=0)

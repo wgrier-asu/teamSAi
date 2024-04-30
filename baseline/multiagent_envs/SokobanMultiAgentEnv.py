@@ -47,6 +47,7 @@ class SokobanMultiAgentEnv(AECEnv):
         # Rendering variables
         self.render_mode = render_mode
         self.tinyworld_render = tinyworld_render
+        self.special_env = special_env
         
         # Penalties and Rewards
         self.penalty_for_step = -1

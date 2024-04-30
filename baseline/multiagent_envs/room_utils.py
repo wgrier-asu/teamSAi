@@ -2,7 +2,6 @@ import random
 import numpy as np
 import marshal
 
-
 def generate_sokocoin_2_room():
     # wall = 0
     # empty space = 1
@@ -60,7 +59,6 @@ def generate_sokocoin_3_room():
     room_structure[room_structure == 4] = 1
 
     return room_structure, room_state
-    
 def generate_room_side_effects(seed=None, dim=(13, 13), p_change_directions=0.35, num_steps=25, num_boxes=3, tries=4, second_player=False, num_coins=0):
     """
     Generates a Sokoban room, represented by an integer matrix. The elements are encoded as follows:

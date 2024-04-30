@@ -93,7 +93,7 @@ if __name__ == "__main__":
                     env.step(action)
                 else:
                     player = my_agents[agent]
-                    action = player.get_action(observation, env) # RL Agent
+                    action = player.get_action(observation, env) # Q-Learning Agent
                     next_observation, reward, terminated, truncated, info = env.step(action)
                     player.update(obs=observation, action=action, reward=reward, terminated=terminated, next_obs=next_observation)
             
