@@ -4,17 +4,17 @@ import time
 # https://github.com/AlignmentResearch/gym-sokoban/tree/default
 # Download gym-sokoban and build library locally
 import gym_sokoban
-from SokobanAgent import SokobanAgent
+from agents.SokobanAgent import SokobanAgent
 
 # You should see the sokoban environments in this list:
 # gym.pprint_registry()
 
 # Environment parameters
-SEED = 7
+SEED = 108 #26, 41, 84, 108, 116
 env_name = 'SideEffects-v0'
 render = False
 display_rate = 0.2 # frequency of console logs
-episodes = 1000
+episodes = 10000
 room_size = 10
 
 # hyperparameters
@@ -59,12 +59,20 @@ agent = SokobanAgent(
 )
 
 
+
+#save the episode number, and the length
+
+epLengths = []
+eprewards = []
+
 for i_episode in range(episodes):
-    if((i_episode+1) % int(episodes*display_rate) == 0): print('\nEpisode #{}/{}'.format(i_episode+1, episodes))
+    if((i_episode+1) % int(episodes*display_rate) == 0): 
+        print('\nEpisode #{}/{}'.format(i_episode+1, episodes))
     observation, info = env.reset(seed=SEED)
 
     done=False
     t = 0
+    totalR = 0
     while not done:
         if render: env.render()
         # action = env.action_space.sample() # Random Sample
@@ -74,6 +82,7 @@ for i_episode in range(episodes):
         # Sleep makes the actions visible for users
         # time.sleep(1)
         next_observation, reward, terminated, truncated, info = env.step(action)
+        totalR += reward
 
          # update the agent
         agent.update(observation, action, reward, terminated, next_observation)
@@ -86,6 +95,9 @@ for i_episode in range(episodes):
     # print("Episode finished after {} timesteps".format(t+1))
     # if(truncated): print("Reason: Truncated")
     # else: print("Reason: Terminated")
+    epLengths.append(t)
+    eprewards.append(totalR)
+
 
     if render: env.render()
     
@@ -93,6 +105,45 @@ for i_episode in range(episodes):
 
 env.close()
 print('\nAll episodes complete.')
+
+
+
+
+
+
+#what is the data?
+#episode rewards vs episode number
+#episode lengths vs episode number
+#trainning error per episode <- to normalize
+import pickle
+
+rewardsFN = "r108.pickle"
+with open(rewardsFN, 'wb') as file: 
+      
+    # A new file will be created 
+    pickle.dump(eprewards, file) 
+
+lenFN = "l108.pickle"
+with open(lenFN, 'wb') as file: 
+      
+    # A new file will be created 
+    pickle.dump(epLengths, file) 
+
+
+
+errorsFN = "e108.pickle" 
+with open(errorsFN, 'wb') as file: 
+      
+    # A new file will be created 
+    pickle.dump(agent.training_error, file) 
+
+#i'd also like top dump all seeen states, the q table and the reachability table
+qTableFN = "q108.pickle" 
+with open(qTableFN, 'wb') as file: 
+      
+    # A new file will be created 
+    pickle.dump(list(agent.q_values.items()), file) 
+
 
 
 # Present Results
@@ -125,6 +176,17 @@ training_error_moving_average = (
 axs[2].plot(range(len(training_error_moving_average)), training_error_moving_average)
 plt.tight_layout()
 plt.show()
+
+
+
+
+
+
+
+
+
+
+
 
 
 

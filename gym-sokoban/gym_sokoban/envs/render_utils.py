@@ -42,7 +42,7 @@ def get_surfaces_and_dims() -> tuple[list, int]:
     coin_filename = pkg_resources.resource_filename(resource_package, '/'.join(('surface', 'coin.png')))
     coin = imageio.imread(coin_filename)
 
-    player_on_coin_filename = pkg_resources.resource_filename(resource_package, '/'.join(('surface', 'player_on_target.png')))
+    player_on_coin_filename = pkg_resources.resource_filename(resource_package, '/'.join(('surface', 'trophy.png')))
     player_on_coin = imageio.imread(player_on_coin_filename)
 
     surfaces = [wall, floor, box_target, box_on_target, box, player, player_on_target, coin, player_on_coin]

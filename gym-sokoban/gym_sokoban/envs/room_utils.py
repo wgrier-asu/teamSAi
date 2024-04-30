@@ -24,8 +24,8 @@ def generate_room_side_effects(seed=None, dim=(13, 13), p_change_directions=0.35
     # In these case, we try another model.
     for t in range(tries):
         room = room_topology_generation(seed, dim, p_change_directions, num_steps)
-        room = place_boxes_and_player(seed, room, num_boxes=num_boxes, second_player=second_player)
-        room = place_coins(seed, room, num_coins=num_coins)
+        room = place_coins(seed+1, room, num_coins=num_coins)
+        room = place_boxes_and_player(seed+2, room, num_boxes=num_boxes, second_player=second_player)
 
 
         room_structure = np.copy(room)
@@ -204,7 +204,7 @@ def place_boxes_and_player(seed, room, num_boxes, second_player):
     if second_player:
         ind = int(num_possible_positions* rng.random())
         player_position = possible_positions[0][ind], possible_positions[1][ind]
-        room[player_position] = 5
+        room[player_position] = 9
 
     # Place boxes
     for n in range(num_boxes):

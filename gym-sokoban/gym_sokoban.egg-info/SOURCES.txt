@@ -14,13 +14,14 @@ gym_sokoban/envs/render_utils.py
 gym_sokoban/envs/room_utils.py
 gym_sokoban/envs/sokoban_env.py
 gym_sokoban/envs/sokoban_env_fixed_targets.py
-gym_sokoban/envs/sokoban_env_fixed_targets_v2.py
 gym_sokoban/envs/sokoban_env_pull.py
+gym_sokoban/envs/sokoban_env_side_effects.py
 gym_sokoban/envs/sokoban_env_two_player.py
 gym_sokoban/envs/sokoban_env_variations.py
 gym_sokoban/envs/surface/box.png
 gym_sokoban/envs/surface/box_on_target.png
 gym_sokoban/envs/surface/box_target.png
+gym_sokoban/envs/surface/coin.png
 gym_sokoban/envs/surface/floor.png
 gym_sokoban/envs/surface/player.png
 gym_sokoban/envs/surface/player_on_target.png

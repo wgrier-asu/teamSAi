@@ -73,7 +73,7 @@ class SideEffectsSokobanEnv(SokobanEnv):
         self.current_was_pushed_against_wall = 0
 
         # starting_observation = self.get_image()
-        starting_observation = tuple(self.player_position)
+        starting_observation = str(self.room_state.flatten())
         return starting_observation, {}
 
 
@@ -84,26 +84,21 @@ class SideEffectsSokobanEnv(SokobanEnv):
 
         self.new_box_position = None
         self.old_box_position = None
-
         moved_box = False
-
         if action == 0:
             moved_player = False
-
         # All push actions are in the range of [0, 3]
         elif action < 5:
             moved_player, moved_box = self._push(action)
-
         else:
             moved_player = self._move(action)
-
         self._calc_reward()
         
         done = self._check_if_done()
 
         # Convert the observation to RGB frame
         # observation = self.get_image()
-        observation = tuple(self.player_position)
+        observation = str(self.room_state.flatten())
 
         info = {
             "action.moved_player": moved_player,
@@ -139,10 +134,9 @@ class SideEffectsSokobanEnv(SokobanEnv):
         # Remove the coin from the room structure
         if self.room_state[new_position[0], new_position[1]] in [7]:
             self.player_position = new_position
-            self.room_state[(new_position[0], new_position[1])] = 5
+            self.room_state[(new_position[0], new_position[1])] = 8
             self.room_state[current_position[0], current_position[1]] = \
                 self.room_fixed[current_position[0], current_position[1]]
-            self.room_fixed[(new_position[0], new_position[1])] = 1
             
             return True
 
@@ -224,7 +218,6 @@ class SideEffectsSokobanEnv(SokobanEnv):
         else:
             return self._move(action), False
 
-
     def _calc_reward(self):
         """
         Calculate Reward Based on coin collection
@@ -235,23 +228,20 @@ class SideEffectsSokobanEnv(SokobanEnv):
         self.reward_last = self.penalty_for_step
 
         # Add a reward if a coin is collected 
-        remaining_coins = self.room_state == 7
-        current_coins_collected = self.num_coins - np.where(remaining_coins)[0].shape[0]
-        if current_coins_collected > self.coins_collected:
+        player_on_coin = self.room_state == 8
+        coin_collected = np.where(player_on_coin)[0].shape[0]
+        if coin_collected > 0 :
             self.reward_last += self.reward_coin
+            self.reward_last += self.reward_finished
+            game_won = True
         
-        # Add penalty if box is pushed into a corner
+        # Add penalty if box is pushed into a wall
         if(self.current_was_pushed_against_wall):
             self.reward_last += self.penalty_box_against_wall
-        # Add penalty if box is pushed against a wall
+        # Add penalty if box is pushed against a corner
         elif(self.current_was_pushed_into_corner):
             self.reward_last += self.penalty_box_in_corner
 
-        game_won = self._check_if_all_coins_collected()
-        if game_won:
-            self.reward_last += self.reward_finished
-        
-        self.coins_collected = current_coins_collected
         # Reset box wall penalty
         self.current_was_pushed_into_corner = 0
         self.current_was_pushed_against_wall = 0    
